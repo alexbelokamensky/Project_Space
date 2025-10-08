@@ -42,7 +42,4 @@ class Player(Mob):
         elif self.pos.y < 0-40:
             self.pos.y = WINDOW_HEIGHT+40
     
-    def collision_verification(self, other):
-        if self.mask.overlap(other.mask, (int(other.rect.left - self.rect.left), int(other.rect.top - self.rect.top))):
-            return True
-        return False
+    

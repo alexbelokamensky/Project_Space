@@ -27,5 +27,7 @@ class Mob(pygame.sprite.Sprite):
         #surface.blit(self.mask_image, self.rect.topleft)
         surface.blit(self.image, self.rect.topleft)
 
-    def rotate(self, angle):
-        self.angle += angle
+    def collision_verification(self, other):
+        if self.mask.overlap(other.mask, (int(other.rect.left - self.rect.left), int(other.rect.top - self.rect.top))):
+            return True
+        return False
