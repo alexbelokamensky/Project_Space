@@ -7,7 +7,7 @@ from core.config import WINDOW_HEIGHT, WINDOW_WIDTH, IMAGE_PATH
 class Player(Mob):
     
     original_player_image = pg.image.load(os.path.join(IMAGE_PATH, "player/player.png"))
-    player_sprite = pg.transform.scale(original_player_image, (75,75))
+    player_sprite = pg.transform.scale(original_player_image, (80,80))
     image = player_sprite
     
     def __init__(self, x, y, angle=0, image=image):
