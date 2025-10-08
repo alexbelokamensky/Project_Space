@@ -7,9 +7,10 @@ from core.config import WINDOW_HEIGHT, WINDOW_WIDTH, IMAGE_PATH
 class Asteroid(Mob):
 
     def __init__(self, x=0, y=0, angle=0, image=None):
-        super().__init__(x, y, angle, image)
         self.generate_image()
+        super().__init__(x, y, angle, image=self.image)
         self.generate_direction()
+        self.update_graphics()
     
     def generate_direction(self):
         match random.randrange(0, 3):
@@ -41,7 +42,6 @@ class Asteroid(Mob):
         asteroid_sprite = pg.transform.scale(original_asteroid_image, (50, 50))                
         self.image = asteroid_sprite
         self.original_image = asteroid_sprite
-        self.update_graphics()
 
     def update(self, dt):
         self.angle += 20*dt
