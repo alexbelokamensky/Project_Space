@@ -2,6 +2,7 @@ import pygame as pg
 import os
 import math
 from models.mob import Mob
+from models.flame import Flame
 from core.config import WINDOW_HEIGHT, WINDOW_WIDTH, IMAGE_PATH
 
 class Player(Mob):
@@ -12,6 +13,7 @@ class Player(Mob):
     
     def __init__(self, x, y, angle=0, image=image):
         super().__init__(x, y, angle, image)
+        self.flame = Flame(self)
         
     def handle_input(self, dt):
         keys = pg.key.get_pressed()
@@ -21,15 +23,25 @@ class Player(Mob):
             self.angle += 50*dt
         elif keys[pg.K_w]:
             self.velocity += self.acceleration / 10 * 5
+            self.flame.power = 2
         elif keys[pg.K_s]:
             self.velocity -= self.acceleration / 10
+            self.flame.power = 0
     
     def update(self, dt):
+        self.flame.power = 1 #standart flame power
         self.handle_input(dt)
         self.border_controll()
         self.acceleration = pg.Vector2(math.sin(math.radians(self.angle)),-math.cos(math.radians(self.angle)))
         self.velocity += self.acceleration / 10
         self.pos += self.velocity * dt
+        
+        self.flame.update()
+        
+    def draw(self, surface):
+        self.flame.draw(surface)
+        surface.blit(self.image, self.rect.topleft)
+        return super().draw(surface)
     
     def border_controll(self):
         if self.pos.x > WINDOW_WIDTH+40:
