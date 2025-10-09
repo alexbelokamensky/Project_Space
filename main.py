@@ -13,8 +13,8 @@ pygame.display.set_caption(WINDOW_TITLE)
 window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 screenController = ScreenController()
-screenController.add_screen("menu", MainMenuScreen(manager=screenController))
-screenController.add_screen("survival", SurvivalModeScreen(manager=screenController))
+screenController.add_screen("menu", MainMenuScreen(screenController))
+screenController.add_screen("survival", SurvivalModeScreen(screenController))
 screenController.set_screen("menu")
 
 clock = pygame.time.Clock()
