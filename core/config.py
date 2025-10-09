@@ -10,3 +10,5 @@ RES_PATH = os.path.join(BASE_PATH, "resources")
 IMAGE_PATH = os.path.join(RES_PATH, "images")
 SOUND_PATH = os.path.join(RES_PATH, "sounds")
 LEVEL_PATH = os.path.join(RES_PATH, "levels")
+
+PLAYER_MAX_HP = 5

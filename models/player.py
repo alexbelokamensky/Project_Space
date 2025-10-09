@@ -3,7 +3,7 @@ import os
 import math
 from models.mob import Mob
 from models.flame import Flame
-from core.config import WINDOW_HEIGHT, WINDOW_WIDTH, IMAGE_PATH
+from core.config import WINDOW_HEIGHT, WINDOW_WIDTH, IMAGE_PATH, PLAYER_MAX_HP
 
 class Player(Mob):
     
@@ -14,6 +14,7 @@ class Player(Mob):
     def __init__(self, x, y, angle=0, image=image):
         super().__init__(x, y, angle, image)
         self.flame = Flame(self)
+        self.hp = PLAYER_MAX_HP
         
     def handle_input(self, dt):
         keys = pg.key.get_pressed()

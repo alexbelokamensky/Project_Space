@@ -48,7 +48,7 @@ class SurvivalModeScreen(Screen):
                 self.bullets.add(bullet)
 
     def update(self, dt):
-        self.survival_hud.update(dt)
+        self.survival_hud.update(dt, self.player.hp)
         self.player.update(dt)
             
         #asteroid generation
@@ -62,12 +62,15 @@ class SurvivalModeScreen(Screen):
         for asteroid in self.asteroids:
             asteroid.update(dt)
         if pg.sprite.spritecollide(self.player, self.asteroids, False):     
-            if pg.sprite.spritecollide(self.player, self.asteroids, False, pg.sprite.collide_mask):
-                self.player = Player(WINDOW_WIDTH/2-100, WINDOW_HEIGHT/2-75)
-                self.asteroids = pg.sprite.Group()
-                self.bullets = pg.sprite.Group()
-                self.survival_hud = SurvivalHud(self.screen_manager)
-                self.screen_manager.set_screen("menu")
+            if pg.sprite.spritecollide(self.player, self.asteroids, True, pg.sprite.collide_mask):
+                self.player.hp -= 1
+                
+                if self.player.hp == 0:
+                    self.player = Player(WINDOW_WIDTH/2-100, WINDOW_HEIGHT/2-75)
+                    self.asteroids = pg.sprite.Group()
+                    self.bullets = pg.sprite.Group()
+                    self.survival_hud = SurvivalHud(self.screen_manager)
+                    self.screen_manager.set_screen("menu")
         
         for bullet in self.bullets:
             bullet.update(dt)
