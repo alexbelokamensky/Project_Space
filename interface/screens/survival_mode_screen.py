@@ -61,7 +61,8 @@ class SurvivalModeScreen(Screen):
         #asteroin moovement and collision check
         for asteroid in self.asteroids:
             asteroid.update(dt)
-            if self.player.collision_verification(asteroid):
+        if pg.sprite.spritecollide(self.player, self.asteroids, False):     
+            if pg.sprite.spritecollide(self.player, self.asteroids, False, pg.sprite.collide_mask):
                 self.player = Player(WINDOW_WIDTH/2-100, WINDOW_HEIGHT/2-75)
                 self.asteroids = pg.sprite.Group()
                 self.bullets = pg.sprite.Group()
@@ -70,9 +71,8 @@ class SurvivalModeScreen(Screen):
         
         for bullet in self.bullets:
             bullet.update(dt)
-            for asteroid in self.asteroids:
-                if bullet.collision_verification(asteroid):
-                    asteroid.kill()
+            if pg.sprite.spritecollide(bullet, self.asteroids, False):
+                if pg.sprite.spritecollide(bullet, self.asteroids, True, pg.sprite.collide_mask):
                     bullet.kill()
         
     def draw(self, surface):
