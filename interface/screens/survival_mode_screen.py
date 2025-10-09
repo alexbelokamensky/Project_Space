@@ -5,6 +5,7 @@ import os
 from models.player import Player
 from models.asteroid import Asteroid
 from models.bullet import Bullet
+from models.explosion import Explosion
 
 from interface.hud.survival_hud import SurvivalHud
 
@@ -35,6 +36,8 @@ class SurvivalModeScreen(Screen):
         #bullets
         self.bullets = pg.sprite.Group()
         
+        self.explosions = pg.sprite.Group()
+        
         
     def handle_event(self, event):
         self.survival_hud.handle_event(event)
@@ -62,7 +65,13 @@ class SurvivalModeScreen(Screen):
         for asteroid in self.asteroids:
             asteroid.update(dt)
         if pg.sprite.spritecollide(self.player, self.asteroids, False):     
-            if pg.sprite.spritecollide(self.player, self.asteroids, True, pg.sprite.collide_mask):
+            if pg.sprite.spritecollide(self.player, self.asteroids, False, pg.sprite.collide_mask):
+                
+                collidet_asteroid = pg.sprite.spritecollide(self.player, self.asteroids, False, pg.sprite.collide_mask)[0]
+                explosion = Explosion(collidet_asteroid)
+                self.explosions.add(explosion)
+                collidet_asteroid.kill()
+                
                 self.player.hp -= 1
                 
                 if self.player.hp == 0:
@@ -75,8 +84,15 @@ class SurvivalModeScreen(Screen):
         for bullet in self.bullets:
             bullet.update(dt)
             if pg.sprite.spritecollide(bullet, self.asteroids, False):
-                if pg.sprite.spritecollide(bullet, self.asteroids, True, pg.sprite.collide_mask):
+                if pg.sprite.spritecollide(bullet, self.asteroids, False, pg.sprite.collide_mask):
+                    collidet_asteroid =pg.sprite.spritecollide(bullet, self.asteroids, False, pg.sprite.collide_mask)[0]
+                    explosion = Explosion(collidet_asteroid)
+                    self.explosions.add(explosion)
+                    collidet_asteroid.kill()
                     bullet.kill()
+        
+        for explosion in self.explosions:
+            explosion.update(dt)
         
     def draw(self, surface):
         
@@ -89,4 +105,7 @@ class SurvivalModeScreen(Screen):
         
         for bullet in self.bullets:
             bullet.draw(surface)
+        
+        for explosion in self.explosions:
+            explosion.draw(surface)
     
