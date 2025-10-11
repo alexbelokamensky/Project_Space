@@ -7,6 +7,7 @@ FPS = 120
 
 BASE_PATH = os.path.dirname(os.path.dirname(__file__))
 RES_PATH = os.path.join(BASE_PATH, "resources")
+THEMES_PATH = os.path.join(RES_PATH, "gui_themes")
 IMAGE_PATH = os.path.join(RES_PATH, "images")
 SOUND_PATH = os.path.join(RES_PATH, "sounds")
 LEVEL_PATH = os.path.join(RES_PATH, "levels")

@@ -2,7 +2,6 @@ import pygame as pg
 import os
 from core.config import IMAGE_PATH
 from models.mob import Mob
-from models.asteroid import Asteroid
 
 class Explosion(Mob):
     
