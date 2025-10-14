@@ -1,6 +1,4 @@
 import pygame as pg
-import pygame_gui as pgui
-import time
 import os
 
 from models.player import Player
@@ -10,16 +8,14 @@ from models.explosion import Explosion
 from models.shield import Shield
 from models.loot import Loot
 
+from interface.screens.base_screen import Screen
 from interface.hud.survival_hud import SurvivalHud
 
 from core.config import WINDOW_WIDTH, WINDOW_HEIGHT, IMAGE_PATH, FPS
-from interface.screens.base_screen import Screen
 
 class SurvivalModeScreen(Screen):
     def __init__(self, screen_manager):
         self.frame_counter = 0
-        self.dead_frame = 0
-        self.frames_before_dead = 0
         
         self.screen_manager = screen_manager
         
@@ -79,7 +75,9 @@ class SurvivalModeScreen(Screen):
         
 
     def update(self, dt):
+        #update interface
         self.survival_hud.update(dt, self.player.hp, self.player.shields, self.player.ult)
+        
         self.player.update(dt)
         
         #shield moovement and collison
@@ -99,13 +97,15 @@ class SurvivalModeScreen(Screen):
             asteroid = Asteroid()
             self.asteroids.add(asteroid)
         
+        #loot generation
         if self.frame_counter % (FPS*10) == 0:
             loot = Loot()
             self.loots.add(loot)
-        
+            
+        #loot collision
         if pg.sprite.spritecollide(self.player, self.loots, False):     
             if pg.sprite.spritecollide(self.player, self.loots, False, pg.sprite.collide_mask):
-                
+                #loot effects
                 collidet_loot = pg.sprite.spritecollide(self.player, self.loots, False, pg.sprite.collide_mask)[0]
                 if collidet_loot.loot_type == 0:
                     self.player.shields += 1
@@ -132,13 +132,7 @@ class SurvivalModeScreen(Screen):
                 
                 #player die
                 if self.player.hp == 0:
-                    self.player = Player(WINDOW_WIDTH/2-100, WINDOW_HEIGHT/2-75)
-                    self.asteroids = pg.sprite.Group()
-                    self.explosions = pg.sprite.Group()
-                    self.loots = pg.sprite.Group()
-                    self.shields = pg.sprite.Group()
-                    self.bullets = pg.sprite.Group()
-                    self.survival_hud = SurvivalHud(self.screen_manager)
+                    self.reset_game()
                     self.screen_manager.set_screen("menu")
         
        #bullet moovement and collision
@@ -151,7 +145,8 @@ class SurvivalModeScreen(Screen):
                     self.explosions.add(explosion)
                     collidet_asteroid.kill()
                     bullet.kill()
-        
+                    
+        #explosion update
         for explosion in self.explosions:
             explosion.update(dt)
         
@@ -177,3 +172,12 @@ class SurvivalModeScreen(Screen):
         for loot in self.loots:
             loot.draw(surface)
     
+    
+    def reset_game(self):
+        self.player = Player(WINDOW_WIDTH/2-100, WINDOW_HEIGHT/2-75)
+        self.asteroids = pg.sprite.Group()
+        self.explosions = pg.sprite.Group()
+        self.loots = pg.sprite.Group()
+        self.shields = pg.sprite.Group()
+        self.bullets = pg.sprite.Group()
+        self.survival_hud = SurvivalHud(self.screen_manager)
