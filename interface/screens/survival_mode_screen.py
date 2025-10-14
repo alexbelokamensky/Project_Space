@@ -15,6 +15,8 @@ from core.config import WINDOW_WIDTH, WINDOW_HEIGHT, IMAGE_PATH, FPS
 
 class SurvivalModeScreen(Screen):
     def __init__(self, screen_manager):
+        self.autofire_flag = False
+        
         self.frame_counter = 0
         
         self.screen_manager = screen_manager
@@ -76,6 +78,10 @@ class SurvivalModeScreen(Screen):
                     shield = Shield(self.player)
                     self.shields.add(shield)
                     self.player.shields -= 1
+
+            #autofire enable/disable
+            if event.unicode == "t":
+                self.autofire_flag = not self.autofire_flag
         
 
     def update(self, dt):
@@ -105,6 +111,11 @@ class SurvivalModeScreen(Screen):
         if self.frame_counter % (FPS*10) == 0:
             loot = Loot()
             self.loots.add(loot)
+        
+        if self.autofire_flag:
+            if self.frame_counter % (FPS/6) == 0:
+                bullet = Bullet(self.player)
+                self.bullets.add(bullet)
             
         #loot collision
         if pg.sprite.spritecollide(self.player, self.loots, False):     
