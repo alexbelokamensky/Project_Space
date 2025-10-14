@@ -47,6 +47,10 @@ class SurvivalModeScreen(Screen):
         
     def handle_event(self, event):
         self.survival_hud.handle_event(event)
+        
+        if self.survival_hud.restart_flag:
+            self.reset_game()
+            
         if event.type == pg.KEYDOWN:
             #pause game
             if event.unicode == '\x1b':
