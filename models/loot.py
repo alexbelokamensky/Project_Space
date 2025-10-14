@@ -22,13 +22,14 @@ class Loot(Mob):
         match self.loot_type:
             case 0: 
                 original_loot_image =pg.image.load(os.path.join(IMAGE_PATH, "shield/shield.png"))
+                loot_sprite = pg.transform.scale(original_loot_image, (35, 35))                
             case 1: 
-                original_loot_image = pg.Surface((50, 50), pg.SRCALPHA)
-                original_loot_image.fill((255, 0, 0))
+                original_loot_image =pg.image.load(os.path.join(IMAGE_PATH, "ultimate/bomb.png"))
+                loot_sprite = pg.transform.scale(original_loot_image, (35, 35))                
             case 2: 
                 original_loot_image =pg.image.load(os.path.join(IMAGE_PATH, "player/player.png"))
+                loot_sprite = pg.transform.scale(original_loot_image, (45, 45))                
 
-        loot_sprite = pg.transform.scale(original_loot_image, (50, 50))                
         self.image = loot_sprite
         self.original_image = loot_sprite
     
