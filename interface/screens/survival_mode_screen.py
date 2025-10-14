@@ -8,10 +8,11 @@ from models.asteroid import Asteroid
 from models.bullet import Bullet
 from models.explosion import Explosion
 from models.shield import Shield
+from models.loot import Loot
 
 from interface.hud.survival_hud import SurvivalHud
 
-from core.config import WINDOW_WIDTH, WINDOW_HEIGHT, IMAGE_PATH
+from core.config import WINDOW_WIDTH, WINDOW_HEIGHT, IMAGE_PATH, FPS
 from interface.screens.base_screen import Screen
 
 class SurvivalModeScreen(Screen):
@@ -27,6 +28,7 @@ class SurvivalModeScreen(Screen):
         self.background = pg.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.background.blit(pg.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT)))
         
+        #hud
         self.survival_hud = SurvivalHud(screen_manager)
         
         #player initialization
@@ -38,29 +40,49 @@ class SurvivalModeScreen(Screen):
         #bullets
         self.bullets = pg.sprite.Group()
         
+        #explosions
         self.explosions = pg.sprite.Group()
         
+        #shields
         self.shields = pg.sprite.Group()
+        
+        #loot
+        self.loots = pg.sprite.Group()
         
     def handle_event(self, event):
         self.survival_hud.handle_event(event)
         if event.type == pg.KEYDOWN:
+            #pause game
             if event.unicode == '\x1b':
                 self.screen_manager.set_screen("menu")
+                
+            #delete all astoroids
             if event.key == 1073742049:
-                self.asteroids = pg.sprite.Group()
+                if self.player.ult > 0:
+                    for asteroid in self.asteroids:
+                        explosion = Explosion(asteroid)
+                        self.explosions.add(explosion)
+                        asteroid.kill()
+                    self.player.ult -= 1
+                
+            #shoot
             if event.unicode == ' ':
                 bullet = Bullet(self.player)
                 self.bullets.add(bullet)
+            
+            #shield
             if event.unicode == 'q':
-                shield = Shield(self.player)
-                self.shields.add(shield)
+                if self.player.shields > 0:
+                    shield = Shield(self.player)
+                    self.shields.add(shield)
+                    self.player.shields -= 1
         
 
     def update(self, dt):
-        self.survival_hud.update(dt, self.player.hp)
+        self.survival_hud.update(dt, self.player.hp, self.player.shields, self.player.ult)
         self.player.update(dt)
         
+        #shield moovement and collison
         for shield in self.shields:
             if pg.sprite.spritecollide(shield, self.asteroids, False):     
                 if pg.sprite.spritecollide(shield, self.asteroids, False, pg.sprite.collide_mask):       
@@ -73,18 +95,31 @@ class SurvivalModeScreen(Screen):
             
         #asteroid generation
         self.frame_counter += 1
-        if(self.frame_counter == 30):
+        if self.frame_counter % (FPS/4) == 0:
             asteroid = Asteroid()
             self.asteroids.add(asteroid)
-            self.frame_counter = 0
-            
         
-        #asteroin moovement and collision check
+        if self.frame_counter % (FPS*10) == 0:
+            loot = Loot()
+            self.loots.add(loot)
+        
+        if pg.sprite.spritecollide(self.player, self.loots, False):     
+            if pg.sprite.spritecollide(self.player, self.loots, False, pg.sprite.collide_mask):
+                
+                collidet_loot = pg.sprite.spritecollide(self.player, self.loots, False, pg.sprite.collide_mask)[0]
+                if collidet_loot.loot_type == 0:
+                    self.player.shields += 1
+                if collidet_loot.loot_type == 1:
+                    self.player.ult += 1
+                if collidet_loot.loot_type == 2:
+                    self.player.hp += 1
+                collidet_loot.kill()
+        
+        #asteroid moovement
         for asteroid in self.asteroids:
-            asteroid.update(dt)
+            asteroid.update(dt)    
         
-        
-        
+        #asteroid collision
         if pg.sprite.spritecollide(self.player, self.asteroids, False):     
             if pg.sprite.spritecollide(self.player, self.asteroids, False, pg.sprite.collide_mask):
                 
@@ -95,14 +130,18 @@ class SurvivalModeScreen(Screen):
                 
                 self.player.hp -= 1
                 
+                #player die
                 if self.player.hp == 0:
                     self.player = Player(WINDOW_WIDTH/2-100, WINDOW_HEIGHT/2-75)
                     self.asteroids = pg.sprite.Group()
+                    self.explosions = pg.sprite.Group()
+                    self.loots = pg.sprite.Group()
+                    self.shields = pg.sprite.Group()
                     self.bullets = pg.sprite.Group()
                     self.survival_hud = SurvivalHud(self.screen_manager)
                     self.screen_manager.set_screen("menu")
         
-       
+       #bullet moovement and collision
         for bullet in self.bullets:
             bullet.update(dt)
             if pg.sprite.spritecollide(bullet, self.asteroids, False):
@@ -117,9 +156,10 @@ class SurvivalModeScreen(Screen):
             explosion.update(dt)
         
     def draw(self, surface):
-        
         surface.blit(self.background, (0, 0))
+        
         self.survival_hud.draw(surface)
+        
         self.player.draw(surface)
         
         for shield in self.shields:
@@ -133,4 +173,7 @@ class SurvivalModeScreen(Screen):
         
         for explosion in self.explosions:
             explosion.draw(surface)
+            
+        for loot in self.loots:
+            loot.draw(surface)
     

@@ -15,6 +15,8 @@ class Player(Mob):
         super().__init__(x, y, angle, image)
         self.flame = Flame(self)
         self.hp = PLAYER_MAX_HP
+        self.shields = 0
+        self.ult = 0
         
     def handle_input(self, dt):
         keys = pg.key.get_pressed()

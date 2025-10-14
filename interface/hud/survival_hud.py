@@ -18,6 +18,12 @@ class SurvivalHud:
         self.lb_hp_text = pgui.elements.UILabel(relative_rect=pg.Rect(125, 5, 50, 50),
                                                 text="hp: ", manager=self.ui_manager)
         
+        self.lb_shields_text = pgui.elements.UILabel(relative_rect=pg.Rect(175, 5, 50, 50),
+                                            text="sh: ", manager=self.ui_manager)
+    
+        self.lb_ult_text = pgui.elements.UILabel(relative_rect=pg.Rect(225, 5, 50, 50),
+                                            text="ult: ", manager=self.ui_manager)
+        
         self.start_time = pg.time.get_ticks()
     
     def handle_event(self, event):
@@ -26,11 +32,14 @@ class SurvivalHud:
             if event.ui_element == self.survival_mode_game:
                 self.manager.set_screen("menu")
 
-    def update(self, dt, hp):
+    def update(self, dt, hp, sh, ult):
         elapsed = (pg.time.get_ticks() - self.start_time) // 1000
         self.lb_timer_text.set_text("time: " + str(elapsed) + "s")
         
         self.lb_hp_text.set_text("hp: " + str(hp))
+        self.lb_shields_text.set_text("sh: " + str(sh))
+        self.lb_ult_text.set_text("ult: " + str(ult))
+        
         self.ui_manager.update(dt)
     
     def draw(self, surface):
