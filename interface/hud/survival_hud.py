@@ -2,7 +2,7 @@ import pygame as pg
 import os
 import pygame_gui as pgui
 
-from core.config import WINDOW_HEIGHT, WINDOW_WIDTH, FPS, PLAYER_MAX_HP, THEMES_PATH
+from core.config import WINDOW_HEIGHT, WINDOW_WIDTH, THEMES_PATH, IMAGE_PATH
 class SurvivalHud:
     
     def __init__(self, manager):
@@ -15,14 +15,38 @@ class SurvivalHud:
         self.lb_timer_text = pgui.elements.UILabel(relative_rect=pg.Rect(5, 5, 100, 30),
                                                    text="time:", manager=self.ui_manager)
         
-        self.lb_hp_text = pgui.elements.UILabel(relative_rect=pg.Rect(125, 5, 50, 50),
-                                                text="hp: ", manager=self.ui_manager)
+        #hp
+        self.pnl_hp_parent = pgui.elements.UIPanel(relative_rect=pg.Rect(125, 5, 60, 30),
+                                                   manager=self.ui_manager,
+                                                   visible=0)
+        self.img_hp = pgui.elements.UIImage(relative_rect=pg.Rect(125, 5, 30, 30),
+                                            image_surface=pg.image.load(os.path.join(IMAGE_PATH, "player/player.png")),
+                                            parent_element=self.pnl_hp_parent,
+                                            manager=self.ui_manager)
+        self.lb_hp_text = pgui.elements.UILabel(relative_rect=pg.Rect(155, 5, 25, 30),
+                                                text="", parent_element=self.pnl_hp_parent, manager=self.ui_manager)
         
-        self.lb_shields_text = pgui.elements.UILabel(relative_rect=pg.Rect(175, 5, 50, 50),
-                                            text="sh: ", manager=self.ui_manager)
-    
-        self.lb_ult_text = pgui.elements.UILabel(relative_rect=pg.Rect(225, 5, 50, 50),
-                                            text="ult: ", manager=self.ui_manager)
+        #shield
+        self.pnl_shield_parent = pgui.elements.UIPanel(relative_rect=pg.Rect(185, 5, 60, 30),
+                                                   manager=self.ui_manager,
+                                                   visible=0)
+        self.img_shield = pgui.elements.UIImage(relative_rect=pg.Rect(187, 7, 25, 25),
+                                            image_surface=pg.image.load(os.path.join(IMAGE_PATH, "shield/shield.png")),
+                                            parent_element=self.pnl_hp_parent,
+                                            manager=self.ui_manager)
+        self.lb_shield_text = pgui.elements.UILabel(relative_rect=pg.Rect(215, 5, 25, 30),
+                                                text="", parent_element=self.pnl_hp_parent, manager=self.ui_manager)
+        
+
+        self.pnl_ultimate_parent = pgui.elements.UIPanel(relative_rect=pg.Rect(245, 5, 60, 30),
+                                                   manager=self.ui_manager,
+                                                   visible=0)
+        self.img_ultimate = pgui.elements.UIImage(relative_rect=pg.Rect(247, 7, 25, 25),
+                                            image_surface=pg.image.load(os.path.join(IMAGE_PATH, "ultimate/bomb.png")),
+                                            parent_element=self.pnl_hp_parent,
+                                            manager=self.ui_manager)
+        self.lb_ultimate_text = pgui.elements.UILabel(relative_rect=pg.Rect(275, 5, 25, 30),
+                                                text="", parent_element=self.pnl_hp_parent, manager=self.ui_manager)
         
         self.start_time = pg.time.get_ticks()
     
@@ -36,9 +60,9 @@ class SurvivalHud:
         elapsed = (pg.time.get_ticks() - self.start_time) // 1000
         self.lb_timer_text.set_text("time: " + str(elapsed) + "s")
         
-        self.lb_hp_text.set_text("hp: " + str(hp))
-        self.lb_shields_text.set_text("sh: " + str(sh))
-        self.lb_ult_text.set_text("ult: " + str(ult))
+        self.lb_hp_text.set_text(str(hp))
+        self.lb_shield_text.set_text(str(sh))
+        self.lb_ultimate_text.set_text(str(ult))
         
         self.ui_manager.update(dt)
     
