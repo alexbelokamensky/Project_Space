@@ -9,7 +9,7 @@ class Bullet(Mob):
         bullet_img.fill((255, 0, 0))
         
         self.player = player
-        self.offset = 40
+        self.offset = 30
         self.angle = angle 
         
         angle_rad = math.radians(self.angle)
