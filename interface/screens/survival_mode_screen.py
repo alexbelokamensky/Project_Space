@@ -69,8 +69,7 @@ class SurvivalModeScreen(Screen):
                 
             #shoot
             if event.unicode == ' ':
-                bullet = Bullet(self.player)
-                self.bullets.add(bullet)
+               self.shoot()
             
             #shield
             if event.unicode == 'q':
@@ -114,8 +113,7 @@ class SurvivalModeScreen(Screen):
         
         if self.autofire_flag:
             if self.frame_counter % (FPS/6) == 0:
-                bullet = Bullet(self.player)
-                self.bullets.add(bullet)
+               self.shoot() 
             
         #loot collision
         if pg.sprite.spritecollide(self.player, self.loots, False):     
@@ -196,3 +194,11 @@ class SurvivalModeScreen(Screen):
         self.shields = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         self.survival_hud = SurvivalHud(self.screen_manager)
+    
+    def shoot(self):
+        bullet = Bullet(self.player, self.player.angle)
+        self.bullets.add(bullet)
+        bullet = Bullet(self.player, self.player.angle+10)
+        self.bullets.add(bullet)
+        bullet = Bullet(self.player, self.player.angle-10)
+        self.bullets.add(bullet)

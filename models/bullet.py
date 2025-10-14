@@ -1,15 +1,16 @@
 import pygame as pg
 import math
 from models.mob import Mob
+from core.config import WINDOW_HEIGHT, WINDOW_WIDTH
 
 class Bullet(Mob):
-    def __init__(self, player):
+    def __init__(self, player, angle):
         bullet_img = pg.Surface((5, 10), pg.SRCALPHA)
         bullet_img.fill((255, 0, 0))
         
         self.player = player
         self.offset = 40
-        self.angle = player.angle 
+        self.angle = angle 
         
         angle_rad = math.radians(self.angle)
         
@@ -23,5 +24,7 @@ class Bullet(Mob):
         self.velocity = pg.Vector2(math.sin(angle_rad), -math.cos(angle_rad)) * 200
         
     def update(self, dt):
-         self.pos += self.velocity * dt
+        self.pos += self.velocity * dt
+        if self.pos.x > WINDOW_WIDTH+50 or self.pos.x < 0-50 or self.pos.y > WINDOW_HEIGHT+50 or self.pos.y < 0-50:
+            self.kill()
     
