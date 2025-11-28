@@ -22,9 +22,9 @@ class SurvivalModeScreen(Screen):
         self.screen_manager = screen_manager
         
         #background
-        background_image = pg.image.load(os.path.join(IMAGE_PATH, "background/background1.jpg")).convert_alpha()
+        background_image = pg.image.load(os.path.join(IMAGE_PATH, "background/background3.jpg")).convert_alpha()
         self.background = pg.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
-        self.background.blit(pg.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT)))
+        self.background.blit(pg.transform.scale_by(background_image, 1.6))
         
         #hud
         self.survival_hud = SurvivalHud(screen_manager)
@@ -102,7 +102,8 @@ class SurvivalModeScreen(Screen):
             
         #asteroid generation
         self.frame_counter += 1
-        if self.frame_counter % (FPS/4) == 0:
+        print((FPS/(3 + (self.frame_counter * 0.0001))))
+        if self.frame_counter % int(FPS/(3 + (self.frame_counter * 0.0001))) == 0:
             asteroid = Asteroid()
             self.asteroids.add(asteroid)
         

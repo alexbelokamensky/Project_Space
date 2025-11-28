@@ -19,9 +19,9 @@ class MainMenuScreen(Screen):
         self.exit_game = pgui.elements.UIButton(relative_rect=pg.Rect(WINDOW_WIDTH/2-100, WINDOW_HEIGHT/2+60, 200, 80),
                                                                text="Exit", manager=self.ui_manager)
         
-        background_image = pg.image.load(os.path.join(IMAGE_PATH, "background/background1.jpg")).convert_alpha()
+        background_image = pg.image.load(os.path.join(IMAGE_PATH, "background/background3.jpg")).convert_alpha()
         self.background = pg.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
-        self.background.blit(pg.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT)))
+        self.background.blit(pg.transform.scale_by(background_image, 1.6))
         
     def handle_event(self, event):
         self.ui_manager.process_events(event)
