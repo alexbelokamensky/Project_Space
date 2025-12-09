@@ -11,7 +11,7 @@ from models.loot import Loot
 from interface.screens.base_screen import Screen
 from interface.hud.survival_hud import SurvivalHud
 
-from core.config import WINDOW_WIDTH, WINDOW_HEIGHT, IMAGE_PATH, FPS
+from core.config import WINDOW_WIDTH, WINDOW_HEIGHT, IMAGE_PATH, FPS, SOUND_PATH
 
 class SurvivalModeScreen(Screen):
     def __init__(self, screen_manager):
@@ -21,10 +21,23 @@ class SurvivalModeScreen(Screen):
         
         self.screen_manager = screen_manager
         
+        
         #background
         background_image = pg.image.load(os.path.join(IMAGE_PATH, "background/background3.jpg")).convert_alpha()
         self.background = pg.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.background.blit(pg.transform.scale_by(background_image, 1.6))
+        
+        
+        self.shoot_sound = pg.mixer.Sound(os.path.join(SOUND_PATH, "fire.mp3"))
+        pg.mixer.Sound.set_volume(self.shoot_sound, 0.2)
+        
+        self.explosion_sound = pg.mixer.Sound(os.path.join(SOUND_PATH, "explosion.mp3"))
+        pg.mixer.Sound.set_volume(self.explosion_sound, 0.2)
+        
+        self.hurt_sound = pg.mixer.Sound(os.path.join(SOUND_PATH, "hurt.mp3"))
+        pg.mixer.Sound.set_volume(self.hurt_sound, 0.2)
+        
+        
         
         #hud
         self.survival_hud = SurvivalHud(screen_manager)
@@ -142,10 +155,12 @@ class SurvivalModeScreen(Screen):
                 self.explosions.add(explosion)
                 collidet_asteroid.kill()
                 
+                pg.mixer.Sound.play(self.hurt_sound)
                 self.player.hp -= 1
                 
                 #player die
                 if self.player.hp == 0:
+                    pg.mixer.music.stop()
                     self.reset_game()
                     self.screen_manager.set_screen("menu")
         
@@ -154,6 +169,7 @@ class SurvivalModeScreen(Screen):
             bullet.update(dt)
             if pg.sprite.spritecollide(bullet, self.asteroids, False):
                 if pg.sprite.spritecollide(bullet, self.asteroids, False, pg.sprite.collide_mask):
+                    pg.mixer.Sound.play(self.explosion_sound)
                     collidet_asteroid =pg.sprite.spritecollide(bullet, self.asteroids, False, pg.sprite.collide_mask)[0]
                     explosion = Explosion(collidet_asteroid)
                     self.explosions.add(explosion)
@@ -197,6 +213,7 @@ class SurvivalModeScreen(Screen):
         self.survival_hud = SurvivalHud(self.screen_manager)
     
     def shoot(self, num_bullets):
+        pg.mixer.Sound.play(self.shoot_sound)
         angle_between_bullets = 15
         init_angle = self.player.angle - int(num_bullets / 2) * angle_between_bullets
         for x in range(num_bullets):

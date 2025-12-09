@@ -3,7 +3,7 @@ import pygame_gui as pgui
 import os
 import sys
 
-from core.config import WINDOW_WIDTH, WINDOW_HEIGHT, IMAGE_PATH
+from core.config import WINDOW_WIDTH, WINDOW_HEIGHT, IMAGE_PATH, SOUND_PATH
 from interface.screens.base_screen import Screen
 
 class MainMenuScreen(Screen):
@@ -28,6 +28,9 @@ class MainMenuScreen(Screen):
         if event.type == pgui.UI_BUTTON_PRESSED:
             if event.ui_element == self.start_survival_mode_game:
                 self.manager.set_screen("survival")
+                pg.mixer.music.load(os.path.join(SOUND_PATH, "theme1.mp3"))
+                pg.mixer.music.play(-1)
+                pg.mixer.music.set_volume(0.2)
             if event.ui_element == self.exit_game:
                 sys.exit()
 
