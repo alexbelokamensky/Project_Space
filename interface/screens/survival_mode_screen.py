@@ -10,17 +10,19 @@ from models.loot import Loot
 
 from interface.screens.base_screen import Screen
 from interface.hud.survival_hud import SurvivalHud
+from interface.screens.game_over_screen import GameOverScreen
 
 from core.config import WINDOW_WIDTH, WINDOW_HEIGHT, IMAGE_PATH, FPS, SOUND_PATH
 
 class SurvivalModeScreen(Screen):
-    def __init__(self, screen_manager):
+    def __init__(self, screen_manager, gameover_screen):
+        self.score = 0
+        
         self.autofire_flag = False
         
         self.frame_counter = 0
         
         self.screen_manager = screen_manager
-        
         
         #background
         background_image = pg.image.load(os.path.join(IMAGE_PATH, "background/background3.jpg")).convert_alpha()
@@ -38,6 +40,7 @@ class SurvivalModeScreen(Screen):
         pg.mixer.Sound.set_volume(self.hurt_sound, 0.2)
         
         
+        self.gameover_screen = gameover_screen
         
         #hud
         self.survival_hud = SurvivalHud(screen_manager)
@@ -115,7 +118,6 @@ class SurvivalModeScreen(Screen):
             
         #asteroid generation
         self.frame_counter += 1
-        print((FPS/(3 + (self.frame_counter * 0.0001))))
         if self.frame_counter % int(FPS/(3 + (self.frame_counter * 0.0001))) == 0:
             asteroid = Asteroid()
             self.asteroids.add(asteroid)
@@ -140,6 +142,8 @@ class SurvivalModeScreen(Screen):
                     self.player.ult += 1
                 if collidet_loot.loot_type == 2:
                     self.player.hp += 1
+                    
+                self.score += 200
                 collidet_loot.kill()
         
         #asteroid moovement
@@ -162,7 +166,8 @@ class SurvivalModeScreen(Screen):
                 if self.player.hp == 0:
                     pg.mixer.music.stop()
                     self.reset_game()
-                    self.screen_manager.set_screen("menu")
+                    self.gameover_screen.update_score(self.score)
+                    self.screen_manager.set_screen("gameover")
         
        #bullet moovement and collision
         for bullet in self.bullets:
@@ -175,6 +180,7 @@ class SurvivalModeScreen(Screen):
                     self.explosions.add(explosion)
                     collidet_asteroid.kill()
                     bullet.kill()
+                    self.score += 100
                     
         #explosion update
         for explosion in self.explosions:

@@ -5,6 +5,7 @@ import os
 from core.config import WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, FPS, IMAGE_PATH
 from interface.screens.main_menu_screen import MainMenuScreen
 from interface.screens.survival_mode_screen import SurvivalModeScreen
+from interface.screens.game_over_screen import GameOverScreen
 from controllers.screen_controller import ScreenController
 
 pygame.init()
@@ -13,8 +14,12 @@ pygame.display.set_caption(WINDOW_TITLE)
 window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 screenController = ScreenController()
+
+gameover_screen = GameOverScreen(screenController)
+
 screenController.add_screen("menu", MainMenuScreen(screenController))
-screenController.add_screen("survival", SurvivalModeScreen(screenController))
+screenController.add_screen("survival", SurvivalModeScreen(screenController, gameover_screen))
+screenController.add_screen("gameover", gameover_screen)
 screenController.set_screen("menu")
 
 clock = pygame.time.Clock()
